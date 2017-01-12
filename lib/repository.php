@@ -5,6 +5,9 @@ class Repository implements RepositoryInterface {
 	protected $db;
 	protected $stmt;
 
+	protected $mode;
+	protected $class = null;
+
 	public function __construct() {
 		$this->db = Database::getConnection();
 	}
@@ -33,6 +36,7 @@ class Repository implements RepositoryInterface {
 			$query .= $this->buildWhere($where);
 
 		$this->stmt = $this->db->prepare($query);
+		$this->stmt->setFetchMode($this->mode, $this->class);
 
 		$this->stmt->execute(array_values($where));
 
@@ -62,6 +66,25 @@ class Repository implements RepositoryInterface {
 
 	public function fetchAll() {
 		return $this->stmt->fetchAll();
+	}
+
+	public function setMode($mode, $class = null) {
+		switch($mode) {
+		case "Class":
+			$this->mode = PDO::FETCH_CLASS;
+			$this->class = $class;
+			break;
+		case "Assoc":
+			$this->mode = PDO::FETCH_ASSOC;
+		}
+	}
+
+	public function describe($table) {
+		$query = "DESCRIBE " . $table;
+		$this->stmt = $this->db->prepare($query);
+		$this->stmt->execute();
+
+		return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	public function buildWhere(array $where = []) {

@@ -4,7 +4,7 @@ class Config {
 	private static $config = null;
 
 	private function parse() {
-		$path = "../cfg/Config.ini";
+		$path = "../cfg/config.ini";
 		self::$config = parse_ini_file($path, true);
 	}
 

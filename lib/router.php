@@ -37,7 +37,7 @@ class Router {
 
 	// Handle control over to the controller
 	private function dispatch() {
-		$this->controllerInstance = new $controllerClass($request);
+		$this->controllerInstance = new $this->controllerClass($this->request);
 		call_user_func_array([$this->controllerInstance, $this->request->action], $this->request->args);
 	}	
 }
